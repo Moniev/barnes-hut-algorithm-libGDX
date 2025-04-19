@@ -1,4 +1,4 @@
-# Barnes-Hut Simulation with Quadtree in 2D
+# Barnes-Hut Simulation
 
 This project simulates gravitational interactions of particles in a two-dimensional space using the Barnes-Hut algorithm, an efficient approximation method for N-body simulations. Instead of computing gravitational forces between all particle pairs, which has an O(N²) complexity, the Barnes-Hut algorithm groups distant particles into clusters and approximates their collective gravitational effect. This is achieved using a quadtree, which hierarchically divides the 2D simulation space into square regions, enabling fast force calculations. The algorithm is ideal for simulating large-scale systems, such as planetary systems or galaxy dynamics, in two dimensions.
 
