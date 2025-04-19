@@ -11,7 +11,7 @@ The quadtree structure significantly reduces the computational cost of force cal
 ## Features
 - **Quadtree-based spatial partitioning**: Reduces computational complexity from O(N²) to O(N log N) for force calculations.
 - **Barnes-Hut approximation**: Efficiently handles gravitational interactions by clustering distant particles.
-- **Scalable for large systems**: Capable of simulating over 8,000 particles smoothly in 2D.
+- **Scalable for large systems**: Capable of simulating over 30,000 particles smoothly in 2D.
 
 ## Installation
 
