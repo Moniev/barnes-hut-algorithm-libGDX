@@ -3,8 +3,8 @@
 This project simulates gravitational interactions of particles in a two-dimensional space using the Barnes-Hut algorithm, an efficient approximation method for N-body simulations. Instead of computing gravitational forces between all particle pairs, which has an O(N²) complexity, the Barnes-Hut algorithm groups distant particles into clusters and approximates their collective gravitational effect. This is achieved using a quadtree, which hierarchically divides the 2D simulation space into square regions, enabling fast force calculations. The algorithm is ideal for simulating large-scale systems, such as planetary systems or galaxy dynamics, in two dimensions. Main problem is java's garbage collector.
 
 ## Examples
-![Simulation Image](https://imgur.com/J9AfgSW)
-![Simulation Image](https://imgur.com/0jsq9Bq)
+![Simulation Image](https://imgur.com/J9AfgSW.jpg)
+![Simulation Image](https://imgur.com/0jsq9Bq.jpg)
 
 The quadtree structure significantly reduces the computational cost of force calculations, making it possible to simulate thousands of particles efficiently. By organizing particles into a hierarchical grid, the system minimizes the number of distance calculations required, achieving a complexity of O(N log N).
 
