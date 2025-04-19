@@ -48,7 +48,7 @@ public class Main implements ApplicationListener {
         spriteBatch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
 		font = new BitmapFont();
-		engine = new Engine(10000, 512, batch, 1, 4, 1440f, 1440f);
+		engine = new Engine(1000, 512, batch, 1, 4, 1440f, 1440f);
 		renderTree = true;
 		renderBodies = true;
         showThreads = true;

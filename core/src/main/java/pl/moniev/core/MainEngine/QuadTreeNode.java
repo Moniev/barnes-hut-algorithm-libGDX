@@ -51,43 +51,43 @@ public class QuadTreeNode {
     }
 
     private void resolvePair(Body b1, Body b2) {
-        double p1x = b1.position.x;
-        double p1y = b1.position.y;
-        double p2x = b2.position.x;
-        double p2y = b2.position.y;
+        float p1x = b1.position.x;
+        float p1y = b1.position.y;
+        float p2x = b2.position.x;
+        float p2y = b2.position.y;
 
-        double r1 = b1.radius;
-        double r2 = b2.radius;
+        float r1 = b1.radius;
+        float r2 = b2.radius;
 
-        double dx = p2x - p1x;
-        double dy = p2y - p1y;
-        double r = r1 + r2;
+        float dX = p2x - p1x;
+        float dY = p2y - p1y;
+        float r = r1 + r2;
 
-        double dSquared = dx * dx + dy * dy;
+        float dSquared = dX * dX + dY * dY;
         if (dSquared > r * r) {
             return;
         }
 
-        double v1x = b1.velocity.x;
-        double v1y = b1.velocity.y;
-        double v2x = b2.velocity.x;
-        double v2y = b2.velocity.y;
+        float v1x = b1.velocity.x;
+        float v1y = b1.velocity.y;
+        float v2x = b2.velocity.x;
+        float v2y = b2.velocity.y;
 
-        double vx = v2x - v1x;
-        double vy = v2y - v1y;
+        float vX = v2x - v1x;
+        float vY = v2y - v1y;
 
-        double d_dot_v = dx * vx + dy * vy;
+        float dDotV = dY * vX + dY * vY;
 
-        double m1 = b1.mass;
-        double m2 = b2.mass;
+        float m1 = b1.mass;
+        float m2 = b2.mass;
 
-        double weight1 = m2 / (m1 + m2);
-        double weight2 = m1 / (m1 + m2);
+        float weight1 = m2 / (m1 + m2);
+        float weight2 = m1 / (m1 + m2);
 
-        if (d_dot_v >= 0.0 && dSquared != 0.0) {
-            double dMag = Math.sqrt(dSquared);
-            double tmpX = dx * (r / dMag - 1.0);
-            double tmpY = dy * (r / dMag - 1.0);
+        if (dDotV >= 0.0 && dSquared != 0.0) {
+            float dMag = (float)Math.sqrt(dSquared);
+            float tmpX = dX * (r / dMag - 1f);
+            float tmpY = dY * (r / dMag - 1f);
             b1.position.x -= weight1 * tmpX;
             b1.position.y -= weight1 * tmpY;
             b2.position.x += weight2 * tmpX;
@@ -95,14 +95,14 @@ public class QuadTreeNode {
             return;
         }
 
-        double vSquared = vx * vx + vy * vy;
-        double rSquared = r * r;
+        float vSquared = vX * vX + vY * vY;
+        float rSquared = r * r;
 
-        double t;
+        float t;
         if (vSquared == 0.0) {
-            t = 0.0; 
+            t = 0f; 
         } else {
-            t = (d_dot_v + Math.sqrt(Math.max(0.0, d_dot_v * d_dot_v - vSquared * (dSquared - rSquared)))) / vSquared;
+            t = (dDotV + (float)Math.sqrt(Math.max(0.0, dDotV * dDotV - vSquared * (dSquared - rSquared)))) / vSquared;
         }
 
         b1.position.x -= v1x * t;
@@ -114,18 +114,18 @@ public class QuadTreeNode {
         p1y = b1.position.y;
         p2x = b2.position.x;
         p2y = b2.position.y;
-        dx = p2x - p1x;
-        dy = p2y - p1y;
-        dSquared = dx * dx + dy * dy;
-        d_dot_v = dx * vx + dy * vy;
+        dX = p2x - p1x;
+        dY = p2y - p1y;
+        dSquared = dX * dX + dY * dY;
+        dDotV = dX * vX + dY * vY;
 
         double tmpX, tmpY;
         if (dSquared == 0.0) {
             tmpX = 0.0;
             tmpY = 0.0;
         } else {
-            tmpX = dx * (1.5 * d_dot_v / dSquared);
-            tmpY = dy * (1.5 * d_dot_v / dSquared);
+            tmpX = dX * (1.5 * dDotV / dSquared);
+            tmpY = dY * (1.5 * dDotV / dSquared);
         }
 
         v1x += tmpX * weight1;
@@ -206,7 +206,6 @@ public class QuadTreeNode {
                     break;
                 }
             }
-           
         }
     
         bodies.clear();
