@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
 import pl.moniev.core.Body.Body;
 import pl.moniev.core.MainEngine.Engine;
@@ -19,42 +21,43 @@ public class Main implements ApplicationListener {
 	public SpriteBatch batch;
 	public ShapeRenderer shapeRenderer;
 	public float elapsed;
+  private GlyphLayout glyphLayout;
 
 	private OrthographicCamera camera;
 
 	private final int WINDOW_WIDTH = 1440;
-    private final int WINDOW_HEIGHT = 1440; 
+  private final int WINDOW_HEIGHT = 1440; 
 
-    private Engine engine; // The game or simulation engine responsible for processing and updating the scene.
-    private BitmapFont font; // Font used for rendering text on the screen.
-    private SpriteBatch spriteBatch; // Used for 2D sprite rendering.
+  private Engine engine; // The game or simulation engine responsible for processing and updating the scene.
+  private BitmapFont font; // Font used for rendering text on the screen.
+  private SpriteBatch spriteBatch; // Used for 2D sprite rendering.
 
-    private boolean renderTree, renderBodies; // Flags to control whether the tree and bodies should be rendered.
-    private boolean showFPS, showThreads, showMemoryUsage, showBodiesCount; // Flags to show various performance metrics like FPS, threads, memory usage, and particle count.
-    private boolean paused; // Flag to pause the simulation or game.
-    private int loop; // Counter for loop iterations (could be used for timing or limiting frame updates).
+  private boolean renderTree, renderBodies; // Flags to control whether the tree and bodies should be rendered.
+  private boolean showFPS, showThreads, showMemoryUsage, showBodiesCount; // Flags to show various performance metrics like FPS, threads, memory usage, and particle count.
+  private boolean paused; // Flag to pause the simulation or game.
+  private int loop; // Counter for loop iterations (could be used for timing or limiting frame updates).
 
 	private InputController inputController; // Class for controlling users keyboards nad mouse inputs.
 
 	@Override
 	public void create () {
-        inputController = new InputController(this);
+    inputController = new InputController(this);
 		Gdx.input.setInputProcessor(inputController);
-        camera = new OrthographicCamera(WINDOW_WIDTH, WINDOW_HEIGHT);
-        camera.position.set(WINDOW_WIDTH / 2f, WINDOW_HEIGHT / 2f, 0);
-        camera.update();
-
+    camera = new OrthographicCamera(WINDOW_WIDTH, WINDOW_HEIGHT);
+    camera.position.set(WINDOW_WIDTH / 2f, WINDOW_HEIGHT / 2f, 0);
+    camera.update();
+    glyphLayout = new GlyphLayout();
 		batch = new SpriteBatch();
-        spriteBatch = new SpriteBatch();
+    spriteBatch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
 		font = new BitmapFont();
 		engine = new Engine(1000, 512, batch, 1, 4, 1440f, 1440f);
 		renderTree = true;
 		renderBodies = true;
-        showThreads = true;
-        showFPS = true;
-        showMemoryUsage = true;
-        showBodiesCount = true;
+    showThreads = true;
+    showFPS = true;
+    showMemoryUsage = true;
+    showBodiesCount = true;
 		List<Body> disk = engine.createDisk();
 		engine.addBodies(disk);
 	}
@@ -66,7 +69,7 @@ public class Main implements ApplicationListener {
 	@Override
 	public void render () {
 		loop++;
-        elapsed += Gdx.graphics.getDeltaTime();
+    elapsed += Gdx.graphics.getDeltaTime();
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -85,11 +88,16 @@ public class Main implements ApplicationListener {
         if (showBodiesCount) font.draw(spriteBatch, "BODIES COUNT: " + getBodiesCount(), 10, Gdx.graphics.getHeight() - 25);
         if (showThreads) font.draw(spriteBatch, "THREADS: " + getThreads(), 10, Gdx.graphics.getHeight() - 40);
         if (showFPS) font.draw(spriteBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, Gdx.graphics.getHeight() - 55);
-        if (paused) font.draw(spriteBatch, "PAUSED", Gdx.graphics.getWidth() / 2 - font.getBounds("PAUSED").width / 2, Gdx.graphics.getHeight() / 2);
+        if (paused) {
+          glyphLayout.setText(font, "PAUSED");
+          float x = Gdx.graphics.getWidth() / 2 - glyphLayout.width / 2;
+          float y = Gdx.graphics.getHeight() / 2 + glyphLayout.height / 2;
+          font.draw(spriteBatch, glyphLayout, x, y); 
+        }
         spriteBatch.end();
-	}
+	  }
 
-	/**
+	  /**
      * Gets the number of threads currently in use.
      * 
      * @return the number of threads.
@@ -117,7 +125,7 @@ public class Main implements ApplicationListener {
 		return camera;
 	}
 
-	public void toggleRenderTree() {
+	  public void toggleRenderTree() {
         renderTree = !renderTree;
     }
 

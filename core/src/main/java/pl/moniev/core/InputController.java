@@ -9,6 +9,11 @@ public class InputController implements InputProcessor {
     public InputController(Main main) {
         this.main = main;
     }
+ 
+    @Override
+    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+      return false;
+    }
 
     @Override
     public boolean keyDown(int keycode) {
@@ -58,15 +63,15 @@ public class InputController implements InputProcessor {
     public boolean mouseMoved(int screenX, int screenY) {
         return false;
     }
-
+ 
     @Override
-    public boolean scrolled(int amount) {
-        if (amount > 0) {
-            main.getCamera().zoom += 1f; 
-        } else if (amount < 0) {
-            main.getCamera().zoom -= 1f;
-        }
-        main.getCamera().update();
-        return true;
-}
+    public boolean scrolled(float amountX, float amountY) {
+      if (amountY > 0) {
+        main.getCamera().zoom += 1f;
+      } else if (amountY < 0) {
+        main.getCamera().zoom -= 1f;
+      }
+      main.getCamera().update();
+      return true;
+    }
 }
