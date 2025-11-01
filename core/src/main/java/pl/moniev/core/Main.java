@@ -10,158 +10,171 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
 import pl.moniev.core.Body.Body;
 import pl.moniev.core.MainEngine.Engine;
 
 public class Main implements ApplicationListener {
-	public Texture texture;
-	public SpriteBatch batch;
-	public ShapeRenderer shapeRenderer;
-	public float elapsed;
+  public Texture texture;
+  public SpriteBatch batch;
+  public ShapeRenderer shapeRenderer;
+  public float elapsed;
   private GlyphLayout glyphLayout;
 
-	private OrthographicCamera camera;
+  private OrthographicCamera camera;
 
-	private final int WINDOW_WIDTH = 1440;
-  private final int WINDOW_HEIGHT = 1440; 
+  private final int WINDOW_WIDTH = 1440;
+  private final int WINDOW_HEIGHT = 1440;
 
-  private Engine engine; // The game or simulation engine responsible for processing and updating the scene.
+  private Engine engine; // The game or simulation engine responsible for processing and updating the
+                         // scene.
   private BitmapFont font; // Font used for rendering text on the screen.
-  private SpriteBatch spriteBatch; // Used for 2D sprite rendering.
 
   private boolean renderTree, renderBodies; // Flags to control whether the tree and bodies should be rendered.
-  private boolean showFPS, showThreads, showMemoryUsage, showBodiesCount; // Flags to show various performance metrics like FPS, threads, memory usage, and particle count.
+  private boolean showFPS, showThreads, showMemoryUsage, showBodiesCount; // Flags to show various performance metrics
+                                                                          // like FPS, threads, memory usage, and
+                                                                          // particle count.
   private boolean paused; // Flag to pause the simulation or game.
-  private int loop; // Counter for loop iterations (could be used for timing or limiting frame updates).
+  // updates).
 
-	private InputController inputController; // Class for controlling users keyboards nad mouse inputs.
+  private InputController inputController; // Class for controlling users keyboards nad mouse inputs.
 
-	@Override
-	public void create () {
+  @Override
+  public void create() {
     inputController = new InputController(this);
-		Gdx.input.setInputProcessor(inputController);
+    Gdx.input.setInputProcessor(inputController);
     camera = new OrthographicCamera(WINDOW_WIDTH, WINDOW_HEIGHT);
     camera.position.set(WINDOW_WIDTH / 2f, WINDOW_HEIGHT / 2f, 0);
     camera.update();
     glyphLayout = new GlyphLayout();
-		batch = new SpriteBatch();
-    spriteBatch = new SpriteBatch();
-		shapeRenderer = new ShapeRenderer();
-		font = new BitmapFont();
-		engine = new Engine(1000, 512, batch, 1, 4, 1440f, 1440f);
-		renderTree = true;
-		renderBodies = true;
+    batch = new SpriteBatch();
+    shapeRenderer = new ShapeRenderer();
+    font = new BitmapFont();
+    engine = new Engine(1000, 512, batch, 1, 4, 1440f, 1440f);
+    renderTree = true;
+    renderBodies = true;
     showThreads = true;
     showFPS = true;
     showMemoryUsage = true;
     showBodiesCount = true;
-		List<Body> disk = engine.createDisk();
-		engine.addBodies(disk);
-	}
+    List<Body> disk = engine.createDisk();
+    engine.addBodies(disk);
+  }
 
-	@Override
-	public void resize (int width, int height) {
-	}
+  @Override
+  public void resize(int width, int height) {
+    camera.viewportWidth = width;
+    camera.viewportHeight = height;
+    camera.update();
+  }
 
-	@Override
-	public void render () {
-		loop++;
+  @Override
+  public void render() {
     elapsed += Gdx.graphics.getDeltaTime();
-		Gdx.gl.glClearColor(0, 0, 0, 0);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    Gdx.gl.glClearColor(0, 0, 0, 0);
+    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		if (!paused) engine.update();
-
-		if (renderBodies) {
-            batch.begin();
-            engine.renderBodies();
-            batch.end();
-        }
-
-		if(renderTree) engine.renderTree(shapeRenderer);
-
-		spriteBatch.begin();
-        if (showMemoryUsage) font.draw(spriteBatch, "MEMORY USAGE: " + getMemoryUsage() + "mb", 10, Gdx.graphics.getHeight() - 10);
-        if (showBodiesCount) font.draw(spriteBatch, "BODIES COUNT: " + getBodiesCount(), 10, Gdx.graphics.getHeight() - 25);
-        if (showThreads) font.draw(spriteBatch, "THREADS: " + getThreads(), 10, Gdx.graphics.getHeight() - 40);
-        if (showFPS) font.draw(spriteBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, Gdx.graphics.getHeight() - 55);
-        if (paused) {
-          glyphLayout.setText(font, "PAUSED");
-          float x = Gdx.graphics.getWidth() / 2 - glyphLayout.width / 2;
-          float y = Gdx.graphics.getHeight() / 2 + glyphLayout.height / 2;
-          font.draw(spriteBatch, glyphLayout, x, y); 
-        }
-        spriteBatch.end();
-	  }
-
-	  /**
-     * Gets the number of threads currently in use.
-     * 
-     * @return the number of threads.
-     */
-    private int getThreads() {
-        return Thread.getAllStackTraces().size();
+    if (!paused) {
+      engine.update();
     }
 
-    /**
-     * Gets the current memory usage of the application.
-     * 
-     * @return the memory usage in megabytes.
-     */
-    private long getMemoryUsage() {
-        long totalMemory = Runtime.getRuntime().totalMemory();
-        long freeMemory = Runtime.getRuntime().freeMemory();
-        return (totalMemory - freeMemory) / (1024 * 1024);
+    if (renderBodies) {
+      batch.setProjectionMatrix(camera.combined);
+      batch.begin();
+      engine.renderBodies();
+      batch.end();
     }
 
-    private int getBodiesCount() {
-        return engine.quadTree.bodies.size();
+    if (renderTree) {
+      shapeRenderer.setProjectionMatrix(camera.combined);
+      shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+      engine.renderTree(shapeRenderer);
+      shapeRenderer.end();
     }
 
-	public OrthographicCamera getCamera() {
-		return camera;
-	}
-
-	  public void toggleRenderTree() {
-        renderTree = !renderTree;
+    batch.begin();
+    if (showMemoryUsage)
+      font.draw(batch, "MEMORY USAGE: " + getMemoryUsage() + "mb", 10, Gdx.graphics.getHeight() - 10);
+    if (showBodiesCount)
+      font.draw(batch, "BODIES COUNT: " + getBodiesCount(), 10, Gdx.graphics.getHeight() - 25);
+    if (showThreads)
+      font.draw(batch, "THREADS: " + getThreads(), 10, Gdx.graphics.getHeight() - 40);
+    if (showFPS)
+      font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, Gdx.graphics.getHeight() - 55);
+    if (paused) {
+      glyphLayout.setText(font, "PAUSED");
+      float x = Gdx.graphics.getWidth() / 2 - glyphLayout.width / 2;
+      float y = Gdx.graphics.getHeight() / 2 + glyphLayout.height / 2;
+      font.draw(batch, glyphLayout, x, y);
     }
+    batch.end();
+  }
 
-    public void toggleRenderBodies() {
-        renderBodies = !renderBodies;
-    }
+  /**
+   * Gets the number of threads currently in use.
+   *
+   * @return the number of threads.
+   */
+  private int getThreads() {
+    return Thread.getAllStackTraces().size();
+  }
 
-    public void toggleShowFPS() {
-        showFPS = !showFPS;
-    }
+  /**
+   * Gets the current memory usage of the application.
+   *
+   * @return the memory usage in megabytes.
+   */
+  private long getMemoryUsage() {
+    long totalMemory = Runtime.getRuntime().totalMemory();
+    long freeMemory = Runtime.getRuntime().freeMemory();
+    return (totalMemory - freeMemory) / (1024 * 1024);
+  }
 
-    public void toggleShowMemoryUsage() {
-        showMemoryUsage = !showMemoryUsage;
-    }
+  private int getBodiesCount() {
+    return engine.quadTree.bodies.size();
+  }
 
-    public void toggleShowThreads() {
-        showThreads = !showThreads;
-    }
+  public OrthographicCamera getCamera() {
+    return camera;
+  }
 
-    public void togglePaused() {
-        paused = !paused;
-    }
+  public void toggleRenderTree() {
+    renderTree = !renderTree;
+  }
 
-	@Override
-	public void pause () {
-	}
+  public void toggleRenderBodies() {
+    renderBodies = !renderBodies;
+  }
 
-	@Override
-	public void resume () {
-	}
+  public void toggleShowFPS() {
+    showFPS = !showFPS;
+  }
 
-	@Override
-	public void dispose () {
-		batch.dispose();
-        spriteBatch.dispose();
-        shapeRenderer.dispose();
-        font.dispose();
-	}
+  public void toggleShowMemoryUsage() {
+    showMemoryUsage = !showMemoryUsage;
+  }
+
+  public void toggleShowThreads() {
+    showThreads = !showThreads;
+  }
+
+  public void togglePaused() {
+    paused = !paused;
+  }
+
+  @Override
+  public void pause() {
+  }
+
+  @Override
+  public void resume() {
+  }
+
+  @Override
+  public void dispose() {
+    batch.dispose();
+    shapeRenderer.dispose();
+    font.dispose();
+  }
 }

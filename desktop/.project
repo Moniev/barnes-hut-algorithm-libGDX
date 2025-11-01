@@ -6,14 +6,27 @@
 	</projects>
 	<buildSpec>
 		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
 			<name>org.eclipse.m2e.core.maven2Builder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
 	</buildSpec>
 	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>.._assets</name>
+			<type>2</type>
+			<location>//home/moniev/Documents/Git/projects/java/barnes-hut-algorithm-libGDX/assets/</location>
+		</link>
+	</linkedResources>
 	<filteredResources>
 		<filter>
 			<id>1757951458422</id>

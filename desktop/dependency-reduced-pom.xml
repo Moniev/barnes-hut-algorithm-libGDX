@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <artifactId>barnes-hut-algorithm-libGDX</artifactId>
+    <groupId>pl.moniev</groupId>
+    <version>1.0.0</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>barnes-hut-algorithm-desktop</artifactId>
+  <name>Main desktop</name>
+  <build>
+    <resources>
+      <resource>
+        <directory>../assets</directory>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${maven-exec.version}</version>
+        <configuration>
+          <mainClass>${mainClass}</mainClass>
+          <executable>java</executable>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${maven-shade.version}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer>
+                  <mainClass>${mainClass}</mainClass>
+                </transformer>
+              </transformers>
+              <finalName>${project.artifactId}-fat</finalName>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <properties>
+    <mainClass>pl.moniev.java.MainDesktop</mainClass>
+    <maven-shade.version>3.5.2</maven-shade.version>
+    <maven-exec.version>3.2.0</maven-exec.version>
+  </properties>
+</project>
